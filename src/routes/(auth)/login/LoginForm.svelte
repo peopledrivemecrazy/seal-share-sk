@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import { requestOTP } from '$lib/vendor/pocketbase/user';
+	import { login, requestOTP } from '$lib/vendor/pocketbase/user';
 	import { superForm, defaults } from 'sveltekit-superforms';
 	let { otpId = $bindable(''), email = $bindable('') }: { otpId: string; email: string } = $props();
 	import { zod } from 'sveltekit-superforms/adapters';
@@ -14,6 +15,8 @@
 		password: z.string().min(8).optional()
 	});
 
+	let togglePasswordInput = $state(true);
+
 	const form = superForm(defaults(zod(formSchema)), {
 		SPA: true,
 		dataType: 'json',
@@ -21,14 +24,16 @@
 		async onUpdate({ form }) {
 			if (form.valid) {
 				email = $formData.email;
-				otpId = await requestOTP($formData.email);
+				if (!togglePasswordInput) otpId = await requestOTP($formData.email);
+				else if ($formData.password) {
+					const user = await login($formData.email, $formData.password);
+					if (user.token) await goto('/');
+				}
 			}
 		}
 	});
 
 	const { form: formData, enhance, message, constraints } = form;
-
-	let togglePasswordInput = $state(true);
 </script>
 
 <div class="grid h-screen place-items-center p-4">
