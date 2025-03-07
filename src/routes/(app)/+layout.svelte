@@ -1,23 +1,21 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
+	import { onMount, type Snippet } from 'svelte';
 	import type { LayoutData } from './$types';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import AppSidebar from '$lib/components/app-sidebar.svelte';
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
 
 	import { goto } from '$app/navigation';
 	import pb from '$lib/vendor/pocketbase';
-	
+	import { userHasKeys } from '$lib/vendor/pocketbase/user';
+
 	$effect(() => {
 		if (!pb.authStore.token) goto('/login');
 	});
+
+	onMount(async () => {
+		const hasKeys = await userHasKeys();
+		if (!hasKeys) goto('/onboarding');
+	});
 </script>
 
-<Sidebar.Provider>
-	<AppSidebar />
-	<main>
-		<Sidebar.Trigger />
-		{@render children?.()}
-	</main>
-</Sidebar.Provider>
+{@render children?.()}
