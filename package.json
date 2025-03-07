@@ -41,6 +41,7 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
-		"mode-watcher": "^0.5.1"
+		"mode-watcher": "^0.5.1",
+		"pocketbase": "^0.25.2"
 	}
 }

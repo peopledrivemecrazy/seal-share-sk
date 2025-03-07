@@ -11,6 +11,9 @@ importers:
       mode-watcher:
         specifier: ^0.5.1
         version: 0.5.1(svelte@5.22.5)
+      pocketbase:
+        specifier: ^0.25.2
+        version: 0.25.2
     devDependencies:
       '@eslint/compat':
         specifier: ^1.2.5
@@ -1135,6 +1138,9 @@ packages:
   pirates@4.0.6:
     resolution: {integrity: sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==}
     engines: {node: '>= 6'}
+
+  pocketbase@0.25.2:
+    resolution: {integrity: sha512-ONZl1+qHJMnhR2uacBlBJ90lm7njtL/zy0606+1ROfK9hSL4LRBRc8r89rMcNRzPzRqCNyoFTh2Qg/lYXdEC1w==}
 
   postcss-import@15.1.0:
     resolution: {integrity: sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==}
@@ -2524,6 +2530,8 @@ snapshots:
   pify@2.3.0: {}
 
   pirates@4.0.6: {}
+
+  pocketbase@0.25.2: {}
 
   postcss-import@15.1.0(postcss@8.5.3):
     dependencies:
