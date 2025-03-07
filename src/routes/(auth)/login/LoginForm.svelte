@@ -10,7 +10,8 @@
 	import { z } from 'zod';
 
 	const formSchema = z.object({
-		email: z.string().email()
+		email: z.string().email(),
+		password: z.string().min(8).optional()
 	});
 
 	const form = superForm(defaults(zod(formSchema)), {
@@ -26,6 +27,8 @@
 	});
 
 	const { form: formData, enhance, message, constraints } = form;
+
+	let togglePasswordInput = $state(true);
 </script>
 
 <div class="grid h-screen place-items-center p-4">
@@ -43,8 +46,25 @@
 				<Form.Description />
 				<Form.FieldErrors />
 			</Form.Field>
+			<div class="text-right text-xs">
+				<Button variant="link" onclick={() => (togglePasswordInput = !togglePasswordInput)}>
+					{togglePasswordInput ? 'Sign in with OTP instead?' : 'Sign in with password?'}
+				</Button>
+			</div>
+			{#if togglePasswordInput}
+				<Form.Field {form} name="password">
+					<Form.Control>
+						<Form.Label>Password</Form.Label>
+						<Input {...$constraints.password} bind:value={$formData.password} type="password" />
+					</Form.Control>
+					<Form.Description />
+					<Form.FieldErrors />
+				</Form.Field>
+			{/if}
 			<div>
-				<Button type="submit" class="my-2 w-full capitalize">Sign in with Email</Button>
+				<Button type="submit" class="my-2 w-full capitalize">
+					{togglePasswordInput ? 'Sign in' : 'Sign in with Email'}
+				</Button>
 			</div>
 		</form>
 	</div>
