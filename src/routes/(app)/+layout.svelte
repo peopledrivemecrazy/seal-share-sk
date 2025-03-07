@@ -1,23 +1,35 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
+	import { onMount, type Snippet } from 'svelte';
 	import type { LayoutData } from './$types';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import AppSidebar from '$lib/components/app-sidebar.svelte';
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
 
 	import { goto } from '$app/navigation';
 	import pb from '$lib/vendor/pocketbase';
-	
+	import { logout, userHasKeys } from '$lib/vendor/pocketbase/user';
+	import Button from '$lib/components/ui/button/button.svelte';
+
 	$effect(() => {
 		if (!pb.authStore.token) goto('/login');
 	});
+
+	onMount(async () => {
+		const hasKeys = await userHasKeys();
+		if (!hasKeys) goto('/onboarding');
+	});
 </script>
 
-<Sidebar.Provider>
-	<AppSidebar />
-	<main>
-		<Sidebar.Trigger />
-		{@render children?.()}
-	</main>
-</Sidebar.Provider>
+<div class="flex items-center justify-end gap-2 p-2">
+	<p>{pb.authStore.record?.email}</p>
+	<Button
+		size="sm"
+		variant="link"
+		onclick={() => {
+			logout();
+			goto('/login');
+		}}
+	>
+		Logout
+	</Button>
+</div>
+{@render children()}

@@ -1,28 +1,63 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button/index.js';
-	import generateKeyPair from '$lib/vendor/openpgp';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Form from '$lib/components/ui/form/index.js';
 	import pb from '$lib/vendor/pocketbase';
+	import { superForm, defaults } from 'sveltekit-superforms';
+	import { zod } from 'sveltekit-superforms/adapters';
+	import { z } from 'zod';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import SearchRecipients from '$lib/components/search-recipients.svelte';
+	import Label from '$lib/components/ui/label/label.svelte';
 
-	const getData = async () => {
-		const record = await pb.collection('test').getOne('408a03k76nkg4et');
-		console.log(record);
-	};
-
-	let keys = $state({
-		privateKey: '',
-		publicKey: '',
-		revocationCertificate: ''
+	const formSchema = z.object({
+		recipient: z.string().email(),
+		files: z.array(z.string())
 	});
 
-	const generateKeys = async () => {
-		const { privateKey, publicKey, revocationCertificate } = await generateKeyPair(
-			'test@test.com',
-			'test'
-		);
-		keys = { privateKey, publicKey, revocationCertificate };
-	};
+	const form = superForm(defaults(zod(formSchema)), {
+		SPA: true,
+		dataType: 'json',
+		validators: zod(formSchema),
+		async onUpdate({ form }) {
+			if (form.valid) {
+				console.log(form.data);
+			}
+		}
+	});
+	const { form: formData, enhance, message, constraints } = form;
 </script>
 
-<Button onclick={getData}>Click me</Button>
-<Button onclick={generateKeys}>Generate keys</Button>
-<pre>{JSON.stringify(keys, null, 2)}</pre>
+{#if pb.authStore.record}
+	<div class="flex flex-col items-center justify-center">
+		<h1 class="text-2xl font-bold">Welcome, {pb.authStore.record?.name}</h1>
+	</div>
+{/if}
+<div class="p-4">
+	<form method="POST" use:enhance>
+		<Form.Field {form} name="recipient">
+			<Form.Control>
+				<Form.Label>Recipient</Form.Label>
+
+				<div>
+					<SearchRecipients placeholder="Search recipients..." fallback="No recipients found" />
+				</div>
+			</Form.Control>
+			<Form.Description />
+			<Form.FieldErrors />
+		</Form.Field>
+		<Form.Field {form} name="files">
+			<Form.Control>
+				<Form.Label>Files</Form.Label>
+				<div class="grid w-full max-w-sm items-center gap-1.5">
+					<Input id="files" type="file" multiple />
+				</div>
+			</Form.Control>
+			<Form.Description />
+			<Form.FieldErrors />
+		</Form.Field>
+
+		<div>
+			<Button type="submit" class="my-2 w-full capitalize">Submit</Button>
+		</div>
+	</form>
+</div>

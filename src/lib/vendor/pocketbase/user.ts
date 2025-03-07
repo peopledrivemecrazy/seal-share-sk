@@ -46,3 +46,16 @@ export const verifyOTP = async (otpId: string, otp: string) => {
 	const request = await pb.collection('users').authWithOTP(otpId, otp);
 	return request;
 };
+
+export const userHasKeys = async () => {
+	const id = pb.authStore.record?.id;
+	if (!id) return false;
+	try {
+		const request = await pb.collection('user_public_keys').getFirstListItem(`user = "${id}"`);
+		console.log(request);
+		return !!request;
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	} catch (error) {
+		return false;
+	}
+};
