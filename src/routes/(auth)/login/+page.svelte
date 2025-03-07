@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
+	import { login } from '$lib/vendor/pocketbase/user';
 	import type { PageData } from './$types';
 	import { superForm, defaults } from 'sveltekit-superforms';
 	let { data }: { data: PageData } = $props();
@@ -18,9 +20,10 @@
 		SPA: true,
 		dataType: 'json',
 		validators: zod(formSchema),
-		onUpdate({ form }) {
+		async onUpdate({ form }) {
 			if (form.valid) {
-				// TODO: Call an external API with form.data, await the result and update form
+				const user = await login($formData.email, $formData.password);
+				if (user.token) await goto('/');
 			}
 		}
 	});

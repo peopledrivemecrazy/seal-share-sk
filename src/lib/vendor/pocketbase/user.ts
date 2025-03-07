@@ -26,3 +26,12 @@ export const createUser = async (user: User) => {
 
 	return request;
 };
+
+export const login = async (email: string, password: string) => {
+	const request = await pb.collection('users').authWithPassword(email, password);
+	return request;
+};
+
+export const logout = async () => {
+	pb.authStore.clear();
+};
