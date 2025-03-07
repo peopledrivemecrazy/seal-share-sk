@@ -1,4 +1,5 @@
 import pb from '.';
+import { PgpKeyConfig } from '../openpgp/index';
 
 export interface User {
 	email: string;

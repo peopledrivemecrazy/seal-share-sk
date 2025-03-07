@@ -112,6 +112,7 @@
         console.log({data})
 
 		const record = await pb.collection('messages').create(data);
+        
 	};
 
     let publicKeys: RecordModel[] = $state([])
