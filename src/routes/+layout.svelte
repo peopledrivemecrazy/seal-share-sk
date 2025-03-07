@@ -1,14 +1,11 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import pb from '$lib/vendor/pocketbase';
 	import '../app.css';
 	let { children } = $props();
 	import { ModeWatcher } from 'mode-watcher';
-
-	$effect(() => {
-		if (!pb.authStore.token) goto('/login');
-	});
 </script>
 
+<svelte:head>
+	<title>Sealshare</title>
+</svelte:head>
 <ModeWatcher />
 {@render children()}
