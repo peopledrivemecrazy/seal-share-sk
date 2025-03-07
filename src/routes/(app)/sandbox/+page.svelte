@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input';
-	import generateKeyPair from '$lib/vendor/openpgp';
+	import generateKeyPair, { getDecryptedMessage, getEncryptedMessage } from '$lib/vendor/openpgp';
 	import pb from '$lib/vendor/pocketbase';
 	import type { RecordModel } from 'pocketbase';
 
@@ -28,6 +28,8 @@
 		keys = { privateKey, publicKey, revocationCertificate };
 	};
 
+    // ---------------------------------------------------------------------------------------
+
 	let email = $state('');
 	let otpId = $state('');
 	let verification_code = $state('');
@@ -45,6 +47,8 @@
 		console.log({ authData });
 	};
 
+    
+    // ---------------------------------------------------------------------------------------
 	const savePgpKey = async () => {
 		const user = pb.authStore.record?.email;
 		if (!user) throw 'No User';
@@ -69,6 +73,9 @@
 		console.log({ record });
 	};
 
+    
+    // ---------------------------------------------------------------------------------------
+
 	let message = $state('');
 	let recipientPublicKeyId = $state('');
 	const saveEncryptedMessage = async () => {
@@ -91,14 +98,18 @@
         console.log({selectedKey})
 
         const {id: keyId, public_key, user: recepient} = selectedKey
+
+        const encrypted_message = await getEncryptedMessage(message, public_key)
         
 		// example create data
 		const data = {
 			sender,
 			recepient,
-			encrypted_message: 'Encryptad ' + message,
+			encrypted_message,
 			public_key: keyId,
 		};
+
+        console.log({data})
 
 		const record = await pb.collection('messages').create(data);
 	};
@@ -109,6 +120,35 @@
 
         publicKeys = records ?? []
         console.log({records})
+    }
+
+    // ---------------------------------------------------------------------------------------
+
+    let messages: RecordModel[] = $state([])
+
+    let decryptMessageId = $state("") 
+
+    let decryptedMessage = $state("")
+    
+    const fetchMessages = async () => {
+        const records: RecordModel[] = await pb.collection('messages').getFullList()
+
+        messages = records ?? []
+    }
+
+    const decryptMessage = async () => {
+        const user = pb.authStore.record?.email
+        const privateKey = localStorage.getItem('privatekey_' + user)
+        if(!privateKey)
+            throw "No Private Key"
+
+        const foundMessage = messages.find((m) => m.id = decryptMessageId)
+        if(!foundMessage)
+            throw "No Message found"
+
+        const decrypted_result = await getDecryptedMessage(foundMessage.encrypted_message,  privateKey, 'replaceMeWithUserInput')
+
+        decryptedMessage= decrypted_result.decrypted_message
     }
 </script>
 
@@ -134,5 +174,15 @@ Message: <Input bind:value={message} />
 Key Id: <Input bind:value={recipientPublicKeyId} />
 <pre>{JSON.stringify(publicKeys, null, 2)}</pre>
 <Button onclick={saveEncryptedMessage}>Save Encrypted Message</Button>
+
+
+
+<h2>Decrypted Message</h2>
+<Button onclick={fetchMessages}>Fetch Messages</Button>
+<pre>{JSON.stringify(messages, null, 2)}</pre>
+Message Id: <Input bind:value={decryptMessageId} />
+
+<pre>{JSON.stringify(decryptedMessage, null, 2)}</pre>
+<Button onclick={decryptMessage}>Decrypt Message</Button>
 
 <pre>{JSON.stringify(keys, null, 2)}</pre>
