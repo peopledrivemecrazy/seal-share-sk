@@ -15,7 +15,7 @@
 	const items = [
 		{
 			title: 'Home',
-			url: '#',
+			url: '/',
 			icon: House
 		},
 		{
@@ -44,7 +44,7 @@
 <Sidebar.Root>
 	<Sidebar.Content>
 		<Sidebar.Group>
-			<Sidebar.GroupLabel>Application</Sidebar.GroupLabel>
+			<Sidebar.GroupLabel>SealShare</Sidebar.GroupLabel>
 			<Sidebar.GroupContent>
 				<Sidebar.Menu>
 					{#each items as item (item.title)}

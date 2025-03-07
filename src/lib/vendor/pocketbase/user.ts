@@ -35,3 +35,13 @@ export const login = async (email: string, password: string) => {
 export const logout = async () => {
 	pb.authStore.clear();
 };
+
+export const requestOTP = async (email: string) => {
+	const { otpId } = await pb.collection('users').requestOTP(email);
+	return otpId;
+};
+
+export const verifyOTP = async (otpId: string, otp: string) => {
+	const request = await pb.collection('users').authWithOTP(otpId, otp);
+	return request;
+};
