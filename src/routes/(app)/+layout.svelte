@@ -6,7 +6,8 @@
 
 	import { goto } from '$app/navigation';
 	import pb from '$lib/vendor/pocketbase';
-	import { userHasKeys } from '$lib/vendor/pocketbase/user';
+	import { logout, userHasKeys } from '$lib/vendor/pocketbase/user';
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	$effect(() => {
 		if (!pb.authStore.token) goto('/login');
@@ -18,4 +19,17 @@
 	});
 </script>
 
-{@render children?.()}
+<div class="flex items-center justify-end gap-2 p-2">
+	<p>{pb.authStore.record?.email}</p>
+	<Button
+		size="sm"
+		variant="link"
+		onclick={() => {
+			logout();
+			goto('/login');
+		}}
+	>
+		Logout
+	</Button>
+</div>
+{@render children()}
