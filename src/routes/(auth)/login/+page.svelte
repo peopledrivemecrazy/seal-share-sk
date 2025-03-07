@@ -1,59 +1,23 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Form from '$lib/components/ui/form/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { login } from '$lib/vendor/pocketbase/user';
-	import type { PageData } from './$types';
-	import { superForm, defaults } from 'sveltekit-superforms';
-	let { data }: { data: PageData } = $props();
-	import { zod } from 'sveltekit-superforms/adapters';
-
-	import { z } from 'zod';
-
-	const formSchema = z.object({
-		email: z.string().email(),
-		password: z.string().min(8)
-	});
-
-	const form = superForm(defaults(zod(formSchema)), {
-		SPA: true,
-		dataType: 'json',
-		validators: zod(formSchema),
-		async onUpdate({ form }) {
-			if (form.valid) {
-				const user = await login($formData.email, $formData.password);
-				if (user.token) await goto('/');
-			}
-		}
-	});
-	const { form: formData, enhance, message, constraints } = form;
+	import { verifyOTP } from '$lib/vendor/pocketbase/user';
+	import LoginForm from './LoginForm.svelte';
+	import OtpScreen from './OTPScreen.svelte';
+	let otpId = $state('');
+	let otp = $state('');
+	let email = $state('');
+	const submit = async () => {
+		const user = await verifyOTP(otpId, otp);
+		if (user.token) goto('/');
+	};
 </script>
 
-<div class="grid h-screen place-items-center">
-	<div class="w-full max-w-md">
-		{#if $message}<h3>{$message}</h3>{/if}
-
-		<form method="POST" use:enhance>
-			<Form.Field {form} name="email">
-				<Form.Control>
-					<Form.Label>Email</Form.Label>
-					<Input {...$constraints.email} bind:value={$formData.email} />
-				</Form.Control>
-				<Form.Description />
-				<Form.FieldErrors />
-			</Form.Field>
-			<Form.Field {form} name="password">
-				<Form.Control>
-					<Form.Label>Password</Form.Label>
-					<Input {...$constraints.password} bind:value={$formData.password} type="password" />
-				</Form.Control>
-				<Form.Description />
-				<Form.FieldErrors />
-			</Form.Field>
-			<div>
-				<Button type="submit" class="my-2">Submit</Button>
-			</div>
-		</form>
+{#if !otpId}
+	<LoginForm bind:otpId bind:email />
+{:else}
+	<div class="grid h-screen place-items-center p-4">
+		<div class="w-full max-w-sm">
+			<OtpScreen bind:otp bind:email bind:otpId {submit} />
+		</div>
 	</div>
-</div>
+{/if}
