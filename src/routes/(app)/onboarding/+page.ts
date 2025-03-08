@@ -9,6 +9,9 @@ export const load = (async () => {
 	const hasKeys = await userHasKeys();
 	if (!hasKeys) {
 		const { privateKey, publicKey } = await generateKeys();
+
+		localStorage.setItem('privatekey_' + pb.authStore.record?.email, privateKey)
+		
 		return {
 			hasKeys,
 			privateKey,

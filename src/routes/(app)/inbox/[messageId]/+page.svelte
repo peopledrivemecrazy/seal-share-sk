@@ -4,12 +4,10 @@
 
 	let { data }: { data: PageData } = $props();
 
-	console.log(data);
-
 	const downloadFile = () => {
-		if (!data.message?.files) return;
+		if (!data.message.files) return;
 
-		const file = new File([data.message?.files], `${data.message.id}.zip`, {
+		const file = new File([data.message.files as Blob], `${data.message.id}.zip`, {
 			type: 'application/zip'
 		});
 
@@ -44,10 +42,14 @@
 	</div>
 
 	<div class="mt-8 space-x-2">
-		<Button onclick={downloadFile}>Download</Button>
+		{#if data.message.files}
+			<Button onclick={downloadFile}>Download</Button>
+		{/if}
 		<a href={'/inbox'}>Back to inbox</a>
 	</div>
 	</div>
 	{:else}
 	<p>Loading...</p>
 {/if}
+
+

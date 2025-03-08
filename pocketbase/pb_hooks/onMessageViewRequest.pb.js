@@ -1,23 +1,24 @@
 // fires only for "users" and "articles" collections
-onRecordCreateRequest((e) => {
+onRecordCreate((e) => {
+    console.log("create message")
+    console.log(Object.keys(e.record).join("|"))
+    console.log(JSON.stringify(e.record.get("files")))
 
+    const trimmedMessage = e.record.get("encrypted_message").trim()
+    const encryptedFiles = e.record.get("files")
+
+    if(trimmedMessage && trimmedMessage.startsWith("-----BEGIN PGP MESSAGE-----"), trimmedMessage.endsWith("-----END PGP MESSAGE-----")){
+        console.log("is encrypted message")
+    }
+    //throw "test errror"
     e.next()
-})
+}, "messages")
 onRecordViewRequest((e) => {
     if (e.auth.isSuperuser())
         return e.next()
 
-    const user_id = e.auth.id
-    const dataset_id = e.record.id
-
-    let collection = $app.findCollectionByNameOrId("access_log")
-    let accessLogRecord = new Record(collection)
-
-    accessLogRecord.set("collection", "messages")
-    accessLogRecord.set("dataset_ids", dataset_id)
-    accessLogRecord.set("user", user_id)
-
-    $app.save(accessLogRecord);
+    const { logMessageAccess } = require(`${__hooks}/utils.js`)
+    logMessageAccess(e, "message_view");
 
     e.next()
 }, "messages")
@@ -32,17 +33,8 @@ onRecordsListRequest((e) => {
     if (e.auth.isSuperuser())
         return e.next()
 
-    const user_id = e.auth.id
-    const dataset_ids = e.records.map(r => r.id)
-
-    let collection = $app.findCollectionByNameOrId("access_log")
-    let accessLogRecord = new Record(collection)
-
-    accessLogRecord.set("collection", "messages")
-    accessLogRecord.set("dataset_ids", dataset_ids)
-    accessLogRecord.set("user", user_id)
-
-    $app.save(accessLogRecord);
+    const { logMessageAccess } = require(`${__hooks}/utils.js`)
+    logMessageAccess(e, "messages_list");
 
     e.next()
 }, "messages")
