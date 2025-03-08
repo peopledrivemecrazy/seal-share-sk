@@ -10,7 +10,7 @@
 
 	import type { PageData } from './$types';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import { sendMessage } from '$lib/vendor/pocketbase/message';
+	import { sendMessage2 } from '$lib/vendor/pocketbase/message';
 	let { data }: { data: PageData } = $props();
 
 	const formSchema = z.object({
@@ -27,7 +27,7 @@
 		async onUpdate({ form }) {
 			if (form.valid) {
 				// api call
-				sendMessage($formData);
+				sendMessage2($formData);
 			}
 		}
 	});

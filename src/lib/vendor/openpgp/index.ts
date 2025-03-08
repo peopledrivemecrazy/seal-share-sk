@@ -77,3 +77,25 @@ export const encryptDocument = async (document: ArrayBuffer, publicKeyArmored: s
 };
 
 export default generateKeyPair;
+
+export const decryptZip = async (
+	privateKeyArmored: string,
+	passphrase: string,
+	binaryData: ArrayBuffer
+) => {
+	console.log(privateKeyArmored)
+	const privateKey = await openpgp.decryptKey({
+		privateKey: await openpgp.readPrivateKey({ armoredKey: privateKeyArmored }),
+		passphrase
+	});
+	const decrypted = await openpgp
+		.decrypt({
+			message: await openpgp.readMessage({ binaryMessage: new Uint8Array(binaryData) }),
+			decryptionKeys: privateKey,
+			format: 'binary'
+		})
+		.catch(function (error) {
+			console.log('Error decrypting', error);
+		});
+	console.log(decrypted);
+};

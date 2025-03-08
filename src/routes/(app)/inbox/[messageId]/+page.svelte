@@ -5,7 +5,7 @@
 	let { data }: { data: PageData } = $props();
 
 	const downloadFile = () => {
-		const file = new File([data.message.files.decrypted_message], 'file.pdf', {
+		const file = new File([data.message.files], 'file.pdf', {
 			type: 'application/pdf'
 		});
 
