@@ -31,12 +31,14 @@ const generateKeyPair = async (email: string, passphrase: string): Promise<PgpKe
 	return { privateKey, publicKey, revocationCertificate, fingerprint };
 };
 
-export const getEncryptedMessage = async (message: string, publicKeyArmored: string) => {
-	const publicKey = await openpgp.readKey({ armoredKey: publicKeyArmored });
+export const getEncryptedMessage = async (message: string, publicKeyArmored: string[]) => {
+	const publicKeys = await Promise.all(
+		publicKeyArmored.map(async (key) => await openpgp.readKey({ armoredKey: key }))
+	);
 
 	const encrypted = await openpgp.encrypt({
 		message: await openpgp.createMessage({ text: message }), // input as Message object
-		encryptionKeys: publicKey
+		encryptionKeys: publicKeys
 		//signingKeys: privateKey // optional
 	});
 
@@ -74,15 +76,6 @@ export const encryptDocument = async (document: ArrayBuffer, publicKeyArmored: s
 	});
 
 	return encrypted;
-};
-
-export const isValidPgpPrivateKey = async (key: string) => {
-    try {
-        const privateKey = await openpgp.readKey({ armoredKey: key });
-        return privateKey.isPrivate(); // Ensure it's a private key
-    } catch {
-        return false; // Invalid key
-    }
 };
 
 export default generateKeyPair;

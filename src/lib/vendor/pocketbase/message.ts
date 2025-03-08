@@ -95,13 +95,13 @@ export const sendMessage2 = async ({ recipientId, message, files }: Message) => 
 	if (!sender) throw 'No sender';
 	const filename = `${recipientId}_${Date.now()}.zip`;
 	const { public_key, id: keyId } = await getKeyStore(recipientId);
-
-	const encrypted = await encrypt(public_key, files, filename);
+	const selfPublicKey = await getKeyStore(sender);
+	const encrypted = await encrypt([public_key, selfPublicKey], files, filename);
 
 	const data = {
 		sender,
 		recepient: recipientId,
-		encrypted_message: await getEncryptedMessage(message, public_key),
+		encrypted_message: await getEncryptedMessage(message, [public_key, selfPublicKey]),
 		files: new File([encrypted], `${filename}.pgp`),
 		public_key: keyId // recipient public key id
 	};
