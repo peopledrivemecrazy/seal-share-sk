@@ -54,7 +54,7 @@
 		</Form.Field>
 
 		<div>
-			<Button type="submit" class="my-2 w-full capitalize">Save</Button>
+			<Button type="submit" class="my-2 w-full capitalize">Overwrite Privatekey</Button>
 		</div>
 	</form>
 </div>
