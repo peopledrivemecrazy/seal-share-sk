@@ -1,7 +1,7 @@
 <script lang="ts">
-	import DataTable from "../inbox/data-table.svelte";
+	import Table from "./table.svelte";
 </script>
 
 <div class="container mx-auto py-10">
-	<DataTable />
+	<Table />
 </div>
