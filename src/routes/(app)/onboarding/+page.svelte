@@ -41,12 +41,13 @@
 </script>
 
 <div class="flex min-h-screen flex-col items-center justify-center bg-background p-4">
-	<div class="space-y-8r w-full max-w-md">
-		<h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+	<div class="w-full max-w-md">
+		<!--	heading	-->
+		<h1 class="mb-7 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
 			Your Encryption Keys Are Ready!
 		</h1>
 
-		<p class="text-lg">
+		<p class="mb-2 text-lg bg-slate-800 p-4 rounded-lg">
 			We've generated a unique key pair for you. Your public key will be used to encrypt files, and
 			your private key is required to decrypt them. For security reasons, we don't store your
 			private key—make sure to download and keep it safe.
