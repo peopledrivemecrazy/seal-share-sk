@@ -38,11 +38,16 @@
 
 <div class="grid h-screen place-items-center p-4">
 	<div class="w-full max-w-sm">
-		<h1 class="text-2xl font-bold">Welcome back</h1>
-		<p class="text-sm text-gray-500">Log in to continue your journey with us.</p>
+		<!--	Header	-->
+		<div class="mb-4">
+			<h1 class="text-center text-2xl font-bold mb-2">Welcome back</h1>
+			<p class="text-center text-sm text-gray-500">Log in to continue your journey with us.</p>
+		</div>
+
 		{#if $message}<h3>{$message}</h3>{/if}
 
 		<form method="POST" use:enhance>
+			<!--	Email		-->
 			<Form.Field {form} name="email">
 				<Form.Control>
 					<Form.Label>Email</Form.Label>
@@ -51,11 +56,7 @@
 				<Form.Description />
 				<Form.FieldErrors />
 			</Form.Field>
-			<div class="text-right text-xs">
-				<Button variant="link" onclick={() => (togglePasswordInput = !togglePasswordInput)}>
-					{togglePasswordInput ? 'Sign in with OTP instead?' : 'Sign in with password?'}
-				</Button>
-			</div>
+
 			{#if togglePasswordInput}
 				<Form.Field {form} name="password">
 					<Form.Control>
@@ -67,8 +68,14 @@
 				</Form.Field>
 			{/if}
 			<div>
-				<Button type="submit" class="my-2 w-full capitalize">
+				<Button type="submit" class="my-3 w-full capitalize">
 					{togglePasswordInput ? 'Sign in' : 'Sign in with Email'}
+				</Button>
+			</div>
+			<!--	Ask to toggle with OTP option		-->
+			<div class="text-center text-xs">
+				<Button variant="link" onclick={() => (togglePasswordInput = !togglePasswordInput)}>
+					{togglePasswordInput ? 'Sign in with OTP instead?' : 'Sign in with password?'}
 				</Button>
 			</div>
 		</form>
