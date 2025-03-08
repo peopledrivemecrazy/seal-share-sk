@@ -48,7 +48,7 @@
 			size="sm"
 			variant="link"
 			onclick={() => {
-			goto('/setting');
+			goto('/settings');
 		}}
 		>
 			Setting
