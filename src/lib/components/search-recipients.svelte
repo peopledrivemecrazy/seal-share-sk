@@ -6,40 +6,24 @@
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { cn } from '$lib/utils.js';
+	import type { RecordModel } from 'pocketbase';
 
 	let {
 		placeholder = 'Search recipients...',
-		fallback = 'No recipients found'
-	}: { placeholder?: string; fallback?: string } = $props();
-
-	const frameworks = [
-		{
-			value: 'sveltekit',
-			label: 'SvelteKit'
-		},
-		{
-			value: 'next.js',
-			label: 'Next.js'
-		},
-		{
-			value: 'nuxt.js',
-			label: 'Nuxt.js'
-		},
-		{
-			value: 'remix',
-			label: 'Remix'
-		},
-		{
-			value: 'astro',
-			label: 'Astro'
-		}
-	];
+		fallback = 'No recipients found',
+		users
+	}: {
+		placeholder?: string;
+		fallback?: string;
+		users: RecordModel[];
+	} = $props();
 
 	let open = $state(false);
 	let value = $state('');
+	let name = $state('');
 	let triggerRef = $state<HTMLButtonElement>(null!);
 
-	const selectedValue = $derived(frameworks.find((f) => f.value === value)?.label);
+	const selectedValue = $derived(users.find((f) => f.name === name)?.name);
 
 	// We want to refocus the trigger button when the user selects
 	// an item from the list so users can continue navigating the
@@ -73,16 +57,16 @@
 			<Command.List>
 				<Command.Empty>{fallback}</Command.Empty>
 				<Command.Group>
-					{#each frameworks as framework}
+					{#each users as user}
 						<Command.Item
-							value={framework.value}
+							value={user.name}
 							onSelect={() => {
-								value = framework.value;
+								name = user.name;
 								closeAndFocusTrigger();
 							}}
 						>
-							<Check class={cn('mr-2 size-4', value !== framework.value && 'text-transparent')} />
-							{framework.label}
+							<Check class={cn('mr-2 size-4', name !== user.name && 'text-transparent')} />
+							{user.name}
 						</Command.Item>
 					{/each}
 				</Command.Group>

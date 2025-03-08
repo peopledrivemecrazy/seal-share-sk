@@ -51,10 +51,14 @@ export const userHasKeys = async () => {
 	if (!id) return false;
 	try {
 		const request = await pb.collection('user_public_keys').getFirstListItem(`user = "${id}"`);
-		console.log(request);
 		return !!request;
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	} catch (error) {
 		return false;
 	}
+};
+
+export const getUsers = async () => {
+	const records = await pb.collection('view_recepients').getFullList();
+	return records;
 };
