@@ -13,7 +13,6 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"pb": "./pocketbase/pocketbase serve --http='127.0.0.1:4466' --dev"
-
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
@@ -55,6 +54,7 @@
 	"dependencies": {
 		"jszip": "^3.10.1",
 		"openpgp": "^6.1.0",
-		"pocketbase": "^0.25.2"
+		"pocketbase": "^0.25.2",
+		"svelte-headless-table": "^0.18.3"
 	}
 }
