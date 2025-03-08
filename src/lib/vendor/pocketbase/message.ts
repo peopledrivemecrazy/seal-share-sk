@@ -1,5 +1,5 @@
 import { encryptDocument, getDecryptedMessage, getEncryptedMessage } from '../openpgp/index';
-import pb from './index';
+import pb, { pb_host } from './index';
 import { getKeyStore } from './keystore';
 
 export const getMessages = async () => {
@@ -81,7 +81,7 @@ const fetchPBFile = async ({
 	filename: string;
 }) => {
 	// https://hack.tdu.cc/_pb/api/files/pbc_3446931122/l7dc0yqycuzq5hx/blob_zyefc00jg0.txt?token=
-	const url = `https://hack.tdu.cc/_pb/api/files/${collectionId}/${recordId}/${filename}`;
+	const url = pb_host + `/api/files/${collectionId}/${recordId}/${filename}`;
 	console.log(url);
 	const response = await fetch(url);
 	const blob = await response.text();

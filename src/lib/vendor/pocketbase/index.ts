@@ -1,5 +1,5 @@
 import PocketBase from 'pocketbase';
-
-const pb = new PocketBase('https://hack.tdu.cc/_pb/');
+export const pb_host = 'https://sealshare.tdu.cc'
+const pb = new PocketBase(pb_host);
 
 export default pb;
