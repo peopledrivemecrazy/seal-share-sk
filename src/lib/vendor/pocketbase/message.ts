@@ -1,5 +1,6 @@
-import { getDecryptedMessage } from '../openpgp/index';
+import { encryptDocument, getDecryptedMessage, getEncryptedMessage } from '../openpgp/index';
 import pb from './index';
+import { getKeyStore } from './keystore';
 
 export const getMessages = async () => {
 	return await pb.collection('messages').getFullList();
@@ -29,25 +30,25 @@ export interface Message {
 }
 
 export const sendMessage = async ({ recipientId, message, files }: Message) => {
-	// create a new record and upload multiple files
-	// (files must be Blob or File instances)
-	// const createdRecord = await pb.collection('example').create({
-	//     title: 'Hello world!', // regular text field
-	//     'documents': [
-	//         new File(['content 1...'], 'file1.txt'),
-	//         new File(['content 2...'], 'file2.txt'),
-	//     ]
-	// });
-
 	const documents = Object.values(files).map((e) => new File([e], e.name));
+	const encryptedDocuments = await encryptDocuments(documents, recipientId);
 	const data = {
 		sender: pb.authStore.record?.id,
 		recipient: recipientId,
-		encrypted_message: message,
-		files: documents,
-		public_key: 'dly9tyioijrgnh6'
+		encrypted_message: getEncryptedMessage(message, (await getKeyStore(recipientId)).public_key),
+		files: encryptedDocuments,
+		public_key: (await getKeyStore(recipientId)).id // recipient public key id
 	};
-	console.log(data);
+
 	const record = await pb.collection('messages').create(data);
 	return record;
+};
+
+const encryptDocuments = async (documents: File[], recipientId: string) => {
+	const publicKey = await getKeyStore(recipientId);
+	if (!publicKey) return false;
+	const encryptedDocuments = documents.map((document) => {
+		return encryptDocument(document.arrayBuffer(), publicKey.public_key);
+	});
+	return encryptedDocuments;
 };

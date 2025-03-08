@@ -32,6 +32,7 @@
 		}
 	});
 	const { form: formData, enhance } = form;
+	$inspect($formData);
 </script>
 
 {#if pb.authStore.record}

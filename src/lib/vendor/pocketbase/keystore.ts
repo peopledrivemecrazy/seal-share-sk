@@ -15,3 +15,11 @@ export const createKeyStore = async (publicKey: string) => {
 
 	return !!record;
 };
+
+export const getKeyStore = async (id: string) => {
+	const record = await pb.collection('user_public_keys').getFirstListItem(`user = "${id}"`);
+	return {
+		id: record.id,
+		public_key: record.public_key
+	};
+};
