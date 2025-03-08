@@ -20,22 +20,12 @@
 		},
 		{
 			title: 'Inbox',
-			url: '#',
+			url: '/inbox',
 			icon: Inbox
 		},
 		{
-			title: 'Calendar',
-			url: '#',
-			icon: Calendar
-		},
-		{
-			title: 'Search',
-			url: '#',
-			icon: Search
-		},
-		{
-			title: 'Settings',
-			url: '#',
+			title: 'Send Message',
+			url: '/send_message',
 			icon: Settings
 		}
 	];
