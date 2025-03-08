@@ -30,7 +30,7 @@
 			size="sm"
 			variant="link"
 			onclick={() => {
-			goto('/');
+			goto('/inbox');
 		}}
 		>
 			Inbox
