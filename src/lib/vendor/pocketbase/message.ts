@@ -1,4 +1,5 @@
 import { encryptDocument, getDecryptedMessage, getEncryptedMessage } from '../openpgp/index';
+import { decrypt, encrypt } from '../openpgp/streamed';
 import pb, { pb_host } from './index';
 import { getKeyStore } from './keystore';
 
@@ -25,14 +26,10 @@ export const getMessage = async (messageId: string) => {
 		recordId: record.id,
 		filename: record.files[0]
 	});
+	const blob = await new Blob([rawTextFile], { type: 'text/plain' }).text();
+	const _decrypted = await decrypt(blob, privateKey);
 
-	let decrypted_files = undefined;
-	try {
-		decrypted_files = await getDecryptedMessage(rawTextFile, privateKey, passphrase);
-	} catch (err) {
-		console.error(err)
-	}
-	return { ...record, decrypted_message, files: decrypted_files };
+	return { ...record, decrypted_message, files: _decrypted };
 };
 
 export interface Message {
@@ -86,8 +83,26 @@ const fetchPBFile = async ({
 }) => {
 	// https://hack.tdu.cc/_pb/api/files/pbc_3446931122/l7dc0yqycuzq5hx/blob_zyefc00jg0.txt?token=
 	const url = pb_host + `/api/files/${collectionId}/${recordId}/${filename}`;
-	console.log(url);
 	const response = await fetch(url);
 	const blob = await response.text();
 	return blob;
+};
+
+export const sendMessage2 = async ({ recipientId, message, files }: Message) => {
+	const sender = pb.authStore.record?.id;
+	if (!sender) throw 'No sender';
+	const filename = `${recipientId}_${Date.now()}.zip`;
+	const { public_key, id: keyId } = await getKeyStore(recipientId);
+
+	const encrypted = await encrypt(public_key, files, filename);
+
+	const data = {
+		sender,
+		recepient: recipientId,
+		encrypted_message: await getEncryptedMessage(message, public_key),
+		files: new File([encrypted], `${filename}.pgp`),
+		public_key: keyId // recipient public key id
+	};
+	const record = await pb.collection('messages').create(data);
+	return record;
 };

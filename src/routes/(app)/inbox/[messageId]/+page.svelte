@@ -5,10 +5,9 @@
 	let { data }: { data: PageData } = $props();
 
 	const downloadFile = () => {
-		if(!data.message?.files)
-			return
+		if (!data.message?.files) return;
 
-		const file = new File([data.message?.files?.decrypted_message], 'file.zip', {
+		const file = new File([data.message?.files], `${data.message.id}.zip`, {
 			type: 'application/zip'
 		});
 
