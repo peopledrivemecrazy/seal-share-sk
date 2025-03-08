@@ -30,25 +30,35 @@ export interface Message {
 }
 
 export const sendMessage = async ({ recipientId, message, files }: Message) => {
+	const sender = pb.authStore.record?.id;
+	if (!sender) throw 'No sender';
+
 	const documents = Object.values(files).map((e) => new File([e], e.name));
-	const encryptedDocuments = await encryptDocuments(documents, recipientId);
+	const { public_key, id: keyId } = await getKeyStore(recipientId);
+	const encryptedDocuments = await encryptDocuments(documents, public_key);
+	const _files = await Promise.all(encryptedDocuments);
+	
 	const data = {
-		sender: pb.authStore.record?.id,
-		recipient: recipientId,
-		encrypted_message: getEncryptedMessage(message, (await getKeyStore(recipientId)).public_key),
-		files: encryptedDocuments,
-		public_key: (await getKeyStore(recipientId)).id // recipient public key id
+		sender,
+		recepient: recipientId,
+		encrypted_message: await getEncryptedMessage(message, public_key),
+		files: _files,
+		public_key: keyId // recipient public key id
 	};
 
 	const record = await pb.collection('messages').create(data);
 	return record;
 };
 
-const encryptDocuments = async (documents: File[], recipientId: string) => {
-	const publicKey = await getKeyStore(recipientId);
-	if (!publicKey) return false;
-	const encryptedDocuments = documents.map((document) => {
-		return encryptDocument(document.arrayBuffer(), publicKey.public_key);
+const encryptDocuments = async (documents: File[], publicKey: string) => {
+	const encryptedDocuments = documents.map(async (document) => {
+		const encrypted = await encryptDocument(await document.arrayBuffer(), publicKey);
+		return blobify(encrypted);
 	});
 	return encryptedDocuments;
+};
+
+const blobify = (encrypted: string) => {
+	const blob = new Blob([encrypted], { type: 'application/octet-stream' });
+	return blob;
 };

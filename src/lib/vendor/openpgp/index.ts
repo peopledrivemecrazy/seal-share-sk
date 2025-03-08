@@ -68,9 +68,8 @@ export const getDecryptedMessage = async (
 
 export const encryptDocument = async (document: ArrayBuffer, publicKeyArmored: string) => {
 	const publicKey = await openpgp.readKey({ armoredKey: publicKeyArmored });
-
 	const encrypted = await openpgp.encrypt({
-		message: await openpgp.createMessage({ binary: document }),
+		message: await openpgp.createMessage({ binary: new Uint8Array(document) }),
 		encryptionKeys: publicKey
 	});
 
