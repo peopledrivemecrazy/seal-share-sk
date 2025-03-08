@@ -20,16 +20,18 @@ export const getMessage = async (messageId: string) => {
 		privateKey,
 		passphrase
 	);
+	if (record.files) {
+		const rawTextFile = await fetchPBFile({
+			collectionId: record.collectionId,
+			recordId: record.id,
+			filename: record.files[0]
+		});
+		const blob = await new Blob([rawTextFile], { type: 'text/plain' }).text();
+		const _decrypted = await decrypt(blob, privateKey);
+		return { ...record, decrypted_message, files: _decrypted };
+	}
 
-	const rawTextFile = await fetchPBFile({
-		collectionId: record.collectionId,
-		recordId: record.id,
-		filename: record.files[0]
-	});
-	const blob = await new Blob([rawTextFile], { type: 'text/plain' }).text();
-	const _decrypted = await decrypt(blob, privateKey);
-
-	return { ...record, decrypted_message, files: _decrypted };
+	return { ...record, decrypted_message, files: [] };
 };
 
 export interface Message {
