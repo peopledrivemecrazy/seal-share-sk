@@ -42,9 +42,7 @@
 		</div>
 	{/if}
 	<div class="p-4">
-		<form method="POST" onsubmit={() => {
-			form.reset(); // Reset the form
-		}} use:enhance>
+		<form method="POST"} use:enhance>
 			<Form.Field {form} name="recipientId">
 				<Form.Control>
 					<Form.Label>Recipient</Form.Label>
