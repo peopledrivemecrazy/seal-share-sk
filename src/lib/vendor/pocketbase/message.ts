@@ -20,7 +20,15 @@ export const getMessage = async (messageId: string) => {
 		passphrase
 	);
 
-	return { ...record, decrypted_message };
+	const rawTextFile = await fetchPBFile({
+		collectionId: record.collectionId,
+		recordId: record.id,
+		filename: record.files[0]
+	});
+
+	const decrypted_files = await getDecryptedMessage(rawTextFile, privateKey, passphrase);
+	console.log(decrypted_files);
+	return { ...record, decrypted_message, files: decrypted_files };
 };
 
 export interface Message {
@@ -37,7 +45,7 @@ export const sendMessage = async ({ recipientId, message, files }: Message) => {
 	const { public_key, id: keyId } = await getKeyStore(recipientId);
 	const encryptedDocuments = await encryptDocuments(documents, public_key);
 	const _files = await Promise.all(encryptedDocuments);
-	
+
 	const data = {
 		sender,
 		recepient: recipientId,
@@ -60,5 +68,22 @@ const encryptDocuments = async (documents: File[], publicKey: string) => {
 
 const blobify = (encrypted: string) => {
 	const blob = new Blob([encrypted], { type: 'application/octet-stream' });
+	return blob;
+};
+
+const fetchPBFile = async ({
+	collectionId,
+	recordId,
+	filename
+}: {
+	collectionId: string;
+	recordId: string;
+	filename: string;
+}) => {
+	// https://hack.tdu.cc/_pb/api/files/pbc_3446931122/l7dc0yqycuzq5hx/blob_zyefc00jg0.txt?token=
+	const url = `https://hack.tdu.cc/_pb/api/files/${collectionId}/${recordId}/${filename}`;
+	console.log(url);
+	const response = await fetch(url);
+	const blob = await response.text();
 	return blob;
 };
