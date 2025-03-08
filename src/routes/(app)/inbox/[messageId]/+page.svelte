@@ -5,9 +5,9 @@
 	let { data }: { data: PageData } = $props();
 
 	const downloadFile = () => {
-		if (!data.message?.files) return;
+		if (!data.message.files) return;
 
-		const file = new File([data.message?.files], `${data.message.id}.zip`, {
+		const file = new File([data.message.files as Blob], `${data.message.id}.zip`, {
 			type: 'application/zip'
 		});
 
@@ -20,16 +20,19 @@
 	};
 </script>
 
-<Button onclick={downloadFile}>Download</Button>
 <a href={'/inbox'}>Back to inbox</a>
 {#if data.message}
 	<h1>{data.message.id}</h1>
 
 	<hr />
 	<pre>
-	{data.message.decrypted_message?.decrypted_message}
+	<p>{data.message.decrypted_message?.decrypted_message}</p>
 	</pre>
 	<hr />
 {:else}
 	<p>Loading...</p>
+{/if}
+
+{#if data.message.files}
+	<Button onclick={downloadFile}>Download</Button>
 {/if}

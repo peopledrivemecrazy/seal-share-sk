@@ -30,8 +30,8 @@
 			size="sm"
 			variant="link"
 			onclick={() => {
-			goto('/inbox');
-		}}
+				goto('/inbox');
+			}}
 		>
 			Inbox
 		</Button>
@@ -39,8 +39,8 @@
 			size="sm"
 			variant="link"
 			onclick={() => {
-			goto('/send');
-		}}
+				goto('/send');
+			}}
 		>
 			Send
 		</Button>
@@ -48,8 +48,8 @@
 			size="sm"
 			variant="link"
 			onclick={() => {
-			goto('/settings');
-		}}
+				goto('/settings');
+			}}
 		>
 			Setting
 		</Button>
@@ -61,13 +61,14 @@
 			size="sm"
 			variant="link"
 			onclick={() => {
-			logout();
-			goto('/login');
-		}}
+				logout();
+				goto('/login');
+			}}
 		>
 			Logout
 		</Button>
 	</div>
-
 </div>
-{@render children()}
+<div class="mx-auto max-w-2xl">
+	{@render children()}
+</div>
