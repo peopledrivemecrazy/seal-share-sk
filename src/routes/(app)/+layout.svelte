@@ -21,8 +21,6 @@
 	});
 
 	let userEmail = $derived(pb.authStore.record?.email);
-	let userName = $derived(userEmail.substring(0, userEmail.indexOf('@')));
-
 </script>
 
 <div class="flex items-center justify-between p-2">
@@ -58,7 +56,7 @@
 	</div>
 
 	<div>
-		<p class="inline-block">{userName}</p>
+		<p class="inline-block">{userEmail}</p>
 		<Button
 			size="sm"
 			variant="link"
