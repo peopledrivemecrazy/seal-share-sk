@@ -19,6 +19,33 @@ export const getMessage = async (messageId: string) => {
 		passphrase
 	);
 
-	console.log({ ...record, decrypted_message });
 	return { ...record, decrypted_message };
+};
+
+export interface Message {
+	recipientId: string;
+	message: string;
+	files: Record<string, File>;
+}
+
+export const sendMessage = async ({ recipientId, message, files }: Message) => {
+	// create a new record and upload multiple files
+	// (files must be Blob or File instances)
+	// const createdRecord = await pb.collection('example').create({
+	//     title: 'Hello world!', // regular text field
+	//     'documents': [
+	//         new File(['content 1...'], 'file1.txt'),
+	//         new File(['content 2...'], 'file2.txt'),
+	//     ]
+	// });
+
+	const documents = Object.values(files).map(e => new File([e], e.name));
+	const data = {
+		recipientId,
+		message,
+		files: documents
+	};
+	console.log(data);
+	const record = await pb.collection('messages').create(data);
+	return record;
 };

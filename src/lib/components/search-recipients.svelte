@@ -11,15 +11,16 @@
 	let {
 		placeholder = 'Search recipients...',
 		fallback = 'No recipients found',
-		users
+		users,
+		value = $bindable('')
 	}: {
 		placeholder?: string;
 		fallback?: string;
 		users: RecordModel[];
+		value?: string;
 	} = $props();
 
 	let open = $state(false);
-	let value = $state('');
 	let name = $state('');
 	let triggerRef = $state<HTMLButtonElement>(null!);
 
@@ -62,6 +63,7 @@
 							value={user.name}
 							onSelect={() => {
 								name = user.name;
+								value = user.id;
 								closeAndFocusTrigger();
 							}}
 						>

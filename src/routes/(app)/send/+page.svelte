@@ -10,12 +10,13 @@
 
 	import type { PageData } from './$types';
 	import { Textarea } from '$lib/components/ui/textarea';
+	import { sendMessage } from '$lib/vendor/pocketbase/message';
 	let { data }: { data: PageData } = $props();
 
 	const formSchema = z.object({
-		recipient: z.string().email(),
+		recipientId: z.string(),
 		message: z.string(),
-		files: z.array(z.string())
+		files: z.record(z.string(), z.instanceof(File))
 	});
 
 	const form = superForm(defaults(zod(formSchema)), {
@@ -24,11 +25,12 @@
 		validators: zod(formSchema),
 		async onUpdate({ form }) {
 			if (form.valid) {
-				console.log(form.data);
+				// api call
+				sendMessage($formData);
 			}
 		}
 	});
-	const { form: formData, enhance, message, constraints } = form;
+	const { form: formData, enhance } = form;
 </script>
 
 {#if pb.authStore.record}
@@ -38,7 +40,7 @@
 {/if}
 <div class="p-4">
 	<form method="POST" use:enhance>
-		<Form.Field {form} name="recipient">
+		<Form.Field {form} name="recipientId">
 			<Form.Control>
 				<Form.Label>Recipient</Form.Label>
 
@@ -47,6 +49,7 @@
 						placeholder="Search recipients..."
 						fallback="No recipients found"
 						users={data.users}
+						bind:value={$formData.recipientId}
 					/>
 				</div>
 			</Form.Control>
@@ -56,7 +59,11 @@
 		<Form.Field {form} name="message">
 			<Form.Control>
 				<Form.Label>Message</Form.Label>
-				<Textarea id="message" placeholder="Enter your message here..." />
+				<Textarea
+					id="message"
+					placeholder="Enter your message here..."
+					bind:value={$formData.message}
+				/>
 			</Form.Control>
 			<Form.Description />
 			<Form.FieldErrors />
@@ -65,7 +72,23 @@
 			<Form.Control>
 				<Form.Label>Files</Form.Label>
 				<div class="grid w-full max-w-sm items-center gap-1.5">
-					<Input id="files" type="file" multiple />
+					<Input
+						id="files"
+						type="file"
+						multiple
+						onchange={e => {
+							const files = (e.target as HTMLInputElement).files;
+							if (!files) return;
+							const newFiles: Record<string, File> = {};
+							const keys = Object.keys(files);
+
+							for (let i = 0; i < keys.length; i++) {
+								const file = files[i];
+								newFiles[file.name] = file;
+							}
+							$formData.files = newFiles;
+						}}
+					/>
 				</div>
 			</Form.Control>
 			<Form.Description />
