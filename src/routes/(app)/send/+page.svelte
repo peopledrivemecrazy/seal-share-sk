@@ -42,7 +42,7 @@
 		</div>
 	{/if}
 	<div class="p-4">
-		<form method="POST"} use:enhance>
+		<form method="POST" use:enhance>
 			<Form.Field {form} name="recipientId">
 				<Form.Control>
 					<Form.Label>Recipient</Form.Label>
