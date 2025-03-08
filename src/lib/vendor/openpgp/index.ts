@@ -78,4 +78,13 @@ export const encryptDocument = async (document: ArrayBuffer, publicKeyArmored: s
 	return encrypted;
 };
 
+export const isValidPgpPrivateKey = async (key: string) => {
+    try {
+        const privateKey = await openpgp.readKey({ armoredKey: key });
+        return privateKey.isPrivate(); // Ensure it's a private key
+    } catch {
+        return false; // Invalid key
+    }
+};
+
 export default generateKeyPair;
