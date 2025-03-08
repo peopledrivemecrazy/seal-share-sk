@@ -26,8 +26,12 @@ export const getMessage = async (messageId: string) => {
 		filename: record.files[0]
 	});
 
-	const decrypted_files = await getDecryptedMessage(rawTextFile, privateKey, passphrase);
-	console.log(decrypted_files);
+	let decrypted_files = undefined;
+	try {
+		decrypted_files = await getDecryptedMessage(rawTextFile, privateKey, passphrase);
+	} catch (err) {
+		console.error(err)
+	}
 	return { ...record, decrypted_message, files: decrypted_files };
 };
 

@@ -5,15 +5,18 @@
 	let { data }: { data: PageData } = $props();
 
 	const downloadFile = () => {
-		const file = new File([data.message.files.decrypted_message], 'file.pdf', {
-			type: 'application/pdf'
+		if(!data.message?.files)
+			return
+
+		const file = new File([data.message?.files?.decrypted_message], 'file.zip', {
+			type: 'application/zip'
 		});
 
 		const url = URL.createObjectURL(file);
 		const a = document.createElement('a');
 		const now = new Date().toISOString().replace(/[-:Z]/g, '');
 		a.href = url;
-		a.download = `file_${now}.pdf`;
+		a.download = `file_${now}.zip`;
 		a.click();
 	};
 </script>
