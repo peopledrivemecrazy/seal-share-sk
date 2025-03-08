@@ -1,0 +1,11 @@
+# Use the official Nginx image from Docker Hub as a base
+FROM nginx:latest
+
+COPY . .
+
+WORKDIR /pocketbase
+
+EXPOSE 4466
+
+# Command to run when the container starts. Here, we use the `CMD` directive.
+CMD ["./pocketbase", "serve", "--http=0.0.0.0:4466", "--dev"]

@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  pocketbase:
+    image: my-pocketbase-image
+    ports:
+      - "4466:4466"
+    networks:
+      - app-network
+
+  nginx:
+    image: my-nginx-image
+    ports:
+      - "80:80"
+    depends_on:
+      - pocketbase
+    networks:
+      - app-network
+
+networks:
+  app-network:

@@ -1,38 +1,69 @@
-# sv
+# Quick Start Guide for creating the Nginx and Pocketbase Docker Image and run it as docker-compose
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+This README provides instructions on how to build Docker images from Dockerfiles and run them using Docker Compose.
 
-## Creating a project
+## Requirements
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Docker
+- Docker Compose
 
-```bash
-# create a new project in the current directory
-npx sv create
+## Directory Structure
 
-# create a new project in my-app
-npx sv create my-app
-```
+Ensure you have the following files in your project directory:
+- `Dockerfile-nginx`: Dockerfile for NGINX
+- `Dockerfile-pocketbase`: Dockerfile for Pocketbase
+- `docker-compose.yml`: Docker Compose configuration file
 
-## Developing
+## Step-by-Step Instructions
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Building Docker Images
 
-```bash
-npm run dev
+1. **Build the NGINX Image:**
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+   Navigate to your project directory where `Dockerfile-nginx` is located and run:
+   
+   ```bash
+   docker build -f Dockerfile-nginx -t my-nginx-image .
+   ```
 
-## Building
+2. **Build the Pocketbase Image:**
 
-To create a production version of your app:
+   Navigate to your project directory where `Dockerfile-pocketbase` is located and run:
+   
+   ```bash
+   docker build -f Dockerfile-pocketbase -t my-pocketbase-image .
+   ```
 
-```bash
-npm run build
-```
+### Running with Docker Compose
 
-You can preview the production build with `npm run preview`.
+1. **Start the Services:**
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+   Make sure you are in the directory containing your `docker-compose.yml` file and run:
+   
+   ```bash
+   docker-compose up -d
+   ```
+
+   This command will start all the services defined in your Docker Compose file. In this setup, Pocketbase will be available at `http://localhost:4466` and NGINX will serve at `http://localhost`.
+
+2. **Stop the Services:**
+
+   When you're done, you can stop the Docker Compose services by running:
+   
+   ```bash
+   docker-compose down
+   ```
+
+## Additional Commands
+
+- To rebuild the services automatically when changes are detected, use:
+  
+  ```bash
+  docker-compose up --build
+  ```
+
+- To run the services in detached mode, use:
+  
+  ```bash
+  docker-compose up -d
+  ```
