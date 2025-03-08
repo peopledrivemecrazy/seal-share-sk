@@ -11,10 +11,12 @@
 </script>
 
 <div class="mx-auto max-w-sm">
-	<h1 class="text-2xl font-bold">Enter the code sent to your email</h1>
-	<InputOTP.Root maxlength={8} class="text-center" bind:value={otp}>
+	<!-- heading -->
+	<h1 class="text-2xl font-bold mb-4 text-center">Enter the code sent to your email</h1>
+	<!-- input OTP	-->
+	<InputOTP.Root maxlength={8} bind:value={otp}>
 		{#snippet children({ cells })}
-			<InputOTP.Group>
+			<InputOTP.Group class="w-full relative left-8">
 				{#each cells.slice(0, 8) as cell}
 					<InputOTP.Slot {cell} />
 				{/each}
@@ -22,18 +24,20 @@
 		{/snippet}
 	</InputOTP.Root>
 </div>
+
 <Button class="mt-4 w-full" onclick={submit}>Verify</Button>
 
 <div class="my-3">
-	<p>
+	<p class="text-center">
 		Didn't receive the code?
 		<Button
+			class="p-0 text-md"
 			variant="link"
 			onclick={async () => {
 				otpId = await requestOTP(email);
 			}}
 		>
-			Resend
+			Resend OTP
 		</Button>
 	</p>
 </div>
