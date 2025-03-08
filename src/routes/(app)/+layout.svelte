@@ -19,19 +19,55 @@
 			if (!hasKeys) goto('/onboarding');
 		}
 	});
+
+	let userEmail = $derived(pb.authStore.record?.email);
 </script>
 
-<div class="flex items-center justify-end gap-2 p-2">
-	<p>{pb.authStore.record?.email}</p>
-	<Button
-		size="sm"
-		variant="link"
-		onclick={() => {
+<div class="flex items-center justify-between p-2">
+	<!-- navigation links	-->
+	<div class="">
+		<Button
+			size="sm"
+			variant="link"
+			onclick={() => {
+			goto('/');
+		}}
+		>
+			Inbox
+		</Button>
+		<Button
+			size="sm"
+			variant="link"
+			onclick={() => {
+			goto('/send');
+		}}
+		>
+			Send
+		</Button>
+		<Button
+			size="sm"
+			variant="link"
+			onclick={() => {
+			goto('/setting');
+		}}
+		>
+			Setting
+		</Button>
+	</div>
+
+	<div>
+		<p class="inline-block">{userEmail}</p>
+		<Button
+			size="sm"
+			variant="link"
+			onclick={() => {
 			logout();
 			goto('/login');
 		}}
-	>
-		Logout
-	</Button>
+		>
+			Logout
+		</Button>
+	</div>
+
 </div>
 {@render children()}
