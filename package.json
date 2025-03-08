@@ -53,6 +53,7 @@
 		"zod": "^3.24.2"
 	},
 	"dependencies": {
+		"jszip": "^3.10.1",
 		"openpgp": "^6.1.0",
 		"pocketbase": "^0.25.2"
 	}
