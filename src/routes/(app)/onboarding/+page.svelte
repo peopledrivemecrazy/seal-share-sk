@@ -1,33 +1,11 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
-	import generateKeyPair from '$lib/vendor/openpgp';
 	import pb from '$lib/vendor/pocketbase';
-	import { createKeyStore } from '$lib/vendor/pocketbase/keystore';
-	import { userHasKeys } from '$lib/vendor/pocketbase/user';
-	import { onMount } from 'svelte';
+	import type { PageData } from './$types';
 	let checked = $state(false);
-	let hasKeys = $state(false);
+	let { data }: { data: PageData } = $props();
 
-	onMount(async () => {
-		hasKeys = await userHasKeys();
-		if (hasKeys) {
-			window.location.href = '/';
-		} else {
-			generateKeys();
-		}
-	});
-
-	let privateKey = $state('');
-
-	const generateKeys = async () => {
-		const email = pb.authStore.record?.email;
-		if (!email) throw 'No User';
-		const { privateKey: pKey, publicKey } = await generateKeyPair(email, 'replaceMeWithUserInput');
-		privateKey = pKey;
-
-		const success = await createKeyStore(publicKey);
-		if (!success) throw 'Failed to create key store';
-	};
+	let privateKey = $state(data.privateKey);
 
 	const stringToTxt = (str: string, email: string) => {
 		const blob = new Blob([str], { type: 'text/plain' });
