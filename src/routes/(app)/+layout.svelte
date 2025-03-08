@@ -14,8 +14,10 @@
 	});
 
 	onMount(async () => {
-		const hasKeys = await userHasKeys();
-		if (!hasKeys) goto('/onboarding');
+		if (pb.authStore.token) {
+			const hasKeys = await userHasKeys();
+			if (!hasKeys) goto('/onboarding');
+		}
 	});
 </script>
 
