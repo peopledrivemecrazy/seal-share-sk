@@ -39,11 +39,13 @@ export const sendMessage = async ({ recipientId, message, files }: Message) => {
 	//     ]
 	// });
 
-	const documents = Object.values(files).map(e => new File([e], e.name));
+	const documents = Object.values(files).map((e) => new File([e], e.name));
 	const data = {
-		recipientId,
-		message,
-		files: documents
+		sender: pb.authStore.record?.id,
+		recipient: recipientId,
+		encrypted_message: message,
+		files: documents,
+		public_key: 'dly9tyioijrgnh6'
 	};
 	console.log(data);
 	const record = await pb.collection('messages').create(data);

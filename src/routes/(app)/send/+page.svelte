@@ -23,6 +23,7 @@
 		SPA: true,
 		dataType: 'json',
 		validators: zod(formSchema),
+		resetForm: false,
 		async onUpdate({ form }) {
 			if (form.valid) {
 				// api call
@@ -76,7 +77,7 @@
 						id="files"
 						type="file"
 						multiple
-						onchange={e => {
+						onchange={(e) => {
 							const files = (e.target as HTMLInputElement).files;
 							if (!files) return;
 							const newFiles: Record<string, File> = {};
